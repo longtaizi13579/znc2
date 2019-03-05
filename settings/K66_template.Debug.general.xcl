@@ -1,0 +1,17 @@
+"D:\robot\IAR 8.22.1\arm\bin\armproc.dll" 
+
+"D:\robot\IAR 8.22.1\arm\bin\armjlink2.dll" 
+
+"D:\智能车\znc\Debug\Exe\K66_template.out" 
+
+--plugin "D:\robot\IAR 8.22.1\arm\bin\armbat.dll" 
+
+--device_macro "D:\robot\IAR 8.22.1\arm\config\debugger\NXP\Kxx.dmac" 
+
+--device_macro "D:\robot\IAR 8.22.1\arm\config\debugger\NXP\K6x_Trace.dmac" 
+
+--flash_loader "D:\智能车\znc\Linker_Files\FlashK66Fxxx256K.board" 
+
+
+
+
