@@ -12,7 +12,7 @@
 #define __ISR_H 
 
 #include "include.h"
-
+#include "pid.h"
 /* Example */
 /*
 #undef  VECTOR_036
@@ -52,6 +52,9 @@ extern void RTC_Isr(void);
 #undef VECTOR_064
 #define VECTOR_064	PIT0_ISR
 
+extern float left_speed_in, left_speed_out, left_speed_set;
+extern float right_speed_in, right_speed_out, right_speed_set;
+extern pid_t pid1 , pid2;
 extern void UART0_ISR(void);
 extern void UART1_ISR(void);
 extern void UART2_ISR(void);

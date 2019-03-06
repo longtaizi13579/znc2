@@ -2644,5 +2644,8 @@
         <file>
             <name>$PROJ_DIR$\source\User\pid.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\source\User\pid.h</name>
+        </file>
     </group>
 </project>

@@ -170,31 +170,36 @@ void main()
   while(1)
   {}
 }
-#elif 1
+#elif 0
+#define AD_CH   ADC1_DM0
 //测试编码器
+
 void main()
 {
   DisableInterrupts;
-  //motor_init();
-  //PWMSetMotor2(5000,5000); 
+  struct pid_controller pidctrl,pidctr2;
+  pid1 = pid_create(&pidctrl, &left_speed_in, &left_speed_out, &left_speed_set,100,2,0,-10000, 10000);
+  pid2 = pid_create(&pidctr2, &right_speed_in, &right_speed_out, &right_speed_set,100,1.5,0,-10000, 10000);
+  motor_init();
+  ftm_pwm_init(FTM3, FTM_CH1,50,0);//PTE6 
   uart_init(test_port, 115200);
   ftm_quad_init(FTM1);//初始化正交解码模块ftm1:
-  ftm_quad_init(FTM2);//初始化正交解码模块ftm1:
+  ftm_quad_init(FTM2);//初始化正交解码模块ftm2:
+  adc_init(AD_CH);
+  adc_init(ADC0_DP3);
+  adc_init(ADC1_SE18);
+  adc_init(ADC1_SE16);
+  //初始化PIT0 ,  500Hz  
+  //20ms 进入一次中断
+  pit_init(PIT0, 500);               //所有中断都一样，在main函数初始化，在isr.h isr.c声明和定义
+  //使能PIT  正常使用PIT时务必打开使能
+  pit_irq_en(PIT0);
   EnableInterrupts;
   while(1)
   {
-    //得到正交解码,脉冲数值并输出：
-    int16 speed1 = ftm_quad_get(FTM1);
-    int16 speed2 = (-1) * ftm_quad_get(FTM2);
-    uart_printf(test_port, "speed1 = %d ， speed2 = %d\n",speed1,speed2); 
-    //清空ftm计数器
-    ftm_quad_clean(FTM1);
-    ftm_quad_clean(FTM2);
-    delayms(200);//短暂延迟
-  
   }
 }
-#elif 0 //测试摄像头
+#elif 1 //测试摄像头
 void main(void)
 {    
     

@@ -127,15 +127,31 @@ void FTM0_ISR()
  *  返  回：	void
  *  时  间：	2018-12-22 16:45
  */
-
+int time_count = 0;
+float left_speed_in = 0, left_speed_out = 0, left_speed_set = 180;
+float right_speed_in = 0, right_speed_out = 0, right_speed_set = 180;
+pid_t pid1,pid2;
 void PIT0_ISR()
 {
-  PIT_Flag_Clear(PIT0);//清中断标志位
+    PIT_Flag_Clear(PIT0);//清中断标志位 
+    if(time_count == 5)
+    {
+      left_speed_in = (float)ftm_quad_get(FTM1);
+      right_speed_in = -(float)ftm_quad_get(FTM2);
+      pid_compute(pid1);//左
+      pid_compute(pid2);//右
+      PWMSetMotor2((s32)right_speed_out,(s32)left_speed_out); 
+      //清空ftm计数器
+      ftm_quad_clean(FTM1);
+      ftm_quad_clean(FTM2);
+      time_count = 0;
+    }
+    time_count = time_count + 1;
+    //方向环
     int adc1 = 0, adc2 = 0, adc3 = 0,adc4=0;
     adc1 = adc_once(ADC1_DM0, ADC_8bit);     //通过drivers_cfg.h找到引脚E0对应的ADC资源 ：ADC1_AD4a
     adc2 = adc_once(ADC0_DP3, ADC_8bit);
     adc3 = adc_once(ADC1_SE18, ADC_8bit);
     adc4 = adc_once(ADC1_SE16, ADC_8bit);
-    uart_printf(UART_0, "adc1 = %d, adc2 = %d ,adc3 = %d ,adc4 = %d \n",adc1,adc2,adc3,adc4);
-    direction_control(adc1+adc2 , adc3+adc4);
+    direction_control(adc1+adc2 , adc3+adc4);    
 }

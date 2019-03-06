@@ -50,6 +50,7 @@
 #include "motor.h"
 #include "steer.h"
 #include "u_iic.h"
+#include "pid.h"
 #include "LQMPU6050.h"
 #include "LQMT9V034.h"
 #endif

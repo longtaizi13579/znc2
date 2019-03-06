@@ -1,12 +1,12 @@
 ###############################################################################
 #
-# IAR ELF Linker V8.22.1.15669/W32 for ARM                05/Mar/2019  18:38:20
+# IAR ELF Linker V8.22.1.15669/W32 for ARM                06/Mar/2019  17:45:52
 # Copyright 2007-2018 IAR Systems AB.
 #
 #    Output file  =  D:\智能车\znc\Debug\Exe\K66_template.out
 #    Map file     =  D:\智能车\znc\Debug\List\K66_template.map
 #    Command line =  
-#        -f C:\Users\bread\AppData\Local\Temp\EWED6F.tmp
+#        -f C:\Users\bread\AppData\Local\Temp\EW3FD3.tmp
 #        (D:\智能车\znc\Debug\Obj\ADC.o D:\智能车\znc\Debug\Obj\common.o
 #        D:\智能车\znc\Debug\Obj\crt0.o D:\智能车\znc\Debug\Obj\DMA.o
 #        D:\智能车\znc\Debug\Obj\exti.o D:\智能车\znc\Debug\Obj\FTM.o
@@ -80,7 +80,7 @@ initialize manually with packing = copy, complex ranges { section .textrw };
   .noinit              ro code  0x00000410    0x7c  crt0.o [1]
                               - 0x0000048c    0x7c
 
-"P1", part 2 of 2:                          0x2cd4
+"P1", part 2 of 2:                          0x3844
   .text                ro code  0x0000048c   0xe22  xprintffull_nomb.o [3]
   .text                ro code  0x000012ae     0xa  xsprout.o [3]
   .text                ro code  0x000012b8    0x16  strchr.o [5]
@@ -106,93 +106,111 @@ initialize manually with packing = copy, complex ranges { section .textrw };
   .text                ro code  0x00001f68    0x14  exit.o [6]
   .text                ro code  0x00001f7c    0x7c  iarttio.o [6]
   .text                ro code  0x00001ff8    0x3c  XShttio.o [3]
-  .text                ro code  0x00002034   0x490  UART.o [1]
-  .text                ro code  0x000024c4    0x38  vsprintf.o [3]
-  .text                ro code  0x000024fc   0x1b4  FTM.o [1]
-  .text                ro code  0x000026b0    0x54  port.o [1]
-  .text                ro code  0x00002704   0x158  PLL.o [1]
-  .text                ro code  0x0000285c   0x118  vectors.o [1]
-  .text                ro code  0x00002974    0x28  printf.o [3]
-  .text                ro code  0x0000299c    0xf4  isr.o [1]
-  .text                ro code  0x00002a90    0x9c  ADC.o [1]
-  .text                ro code  0x00002b2c    0x88  pid.o [1]
-  .text                ro code  0x00002bb4    0xc4  start.o [1]
-  .text                ro code  0x00002c78    0x38  wdog.o [1]
-  .text                ro code  0x00002cb0    0x58  main.o [1]
-  .text                ro code  0x00002d08     0xc  common.o [1]
-  .text                ro code  0x00002d14    0x5c  lptmr.o [1]
-  Veneer               ro code  0x00002d70     0x8  - Linker created -
-  .text                ro code  0x00002d78    0x94  LQMT9V034.o [1]
-  .data_init                    0x00002e0c    0x54  <Block>
-    Initializer bytes  const    0x00002e0c    0x54  <for .data-1>
-  .text                ro code  0x00002e60    0x40  zero_init3.o [5]
-  .rodata              const    0x00002ea0    0x30  isr.o [1]
-  .rodata              const    0x00002ed0    0x30  vectors.o [1]
-  .text                ro code  0x00002f00    0x28  data_init.o [5]
-  CodeRelocate                  0x00002f28    0x28  <Block>
-    Initializer bytes  const    0x00002f28    0x28  <for CodeRelocateRam-1>
-  .rodata              const    0x00002f50    0x24  vectors.o [1]
-  .text                ro code  0x00002f74    0x22  fpinit_M.o [4]
-  .text                ro code  0x00002f96    0x22  iarwrite.o [6]
-  .iar.init_table      const    0x00002fb8    0x10  - Linker created -
-  .text                ro code  0x00002fc8    0x20  putchar.o [3]
-  .text                ro code  0x00002fe8    0x10  write.o [6]
-  .text                ro code  0x00002ff8    0x1e  dwrite.o [6]
-  .text                ro code  0x00003016    0x20  iarwstd.o [6]
-  .text                ro code  0x00003038    0x1e  cmain.o [5]
-  .text                ro code  0x00003056     0x4  low_level_init.o [3]
-  .text                ro code  0x0000305a     0x4  exit.o [3]
-  .text                ro code  0x00003060     0xa  cexit.o [5]
-  .rodata              const    0x0000306c    0x1c  main.o [1]
-  .rodata              const    0x00003088    0x18  vectors.o [1]
-  .text                ro code  0x000030a0    0x16  xprout.o [3]
-  .rodata              const    0x000030b8     0xc  vectors.o [1]
-  .rodata              const    0x000030c4     0xc  vectors.o [1]
-  .rodata              const    0x000030d0     0xc  vectors.o [1]
-  .rodata              const    0x000030dc     0xc  vectors.o [1]
-  .rodata              const    0x000030e8     0xc  vectors.o [1]
-  .rodata              const    0x000030f4     0xc  vectors.o [1]
-  .rodata              const    0x00003100     0xc  vectors.o [1]
-  .rodata              const    0x0000310c     0xc  vectors.o [1]
-  .rodata              const    0x00003118     0xc  vectors.o [1]
-  .rodata              const    0x00003124     0xc  vectors.o [1]
-  .rodata              const    0x00003130     0xc  vectors.o [1]
-  .rodata              const    0x0000313c     0xc  vectors.o [1]
-  .rodata              const    0x00003148     0xc  vectors.o [1]
-  .text                ro code  0x00003154     0xc  cstartup_M.o [5]
-                              - 0x00003160  0x2cd4
+  Veneer               ro code  0x00002034     0x8  - Linker created -
+  Veneer               ro code  0x0000203c     0x8  - Linker created -
+  .text                ro code  0x00002044   0x860  LQMT9V034.o [1]
+  .text                ro code  0x000028a4    0x74  exti.o [1]
+  .text                ro code  0x00002918   0x490  UART.o [1]
+  .text                ro code  0x00002da8    0xc4  GPIO.o [1]
+  .text                ro code  0x00002e6c   0x1d0  DMA.o [1]
+  .text                ro code  0x0000303c    0x40  sprintf.o [3]
+  .text                ro code  0x0000307c    0x54  port.o [1]
+  .text                ro code  0x000030d0    0x38  vsprintf.o [3]
+  .text                ro code  0x00003108   0x178  isr.o [1]
+  .text                ro code  0x00003280    0xb4  FTM.o [1]
+  .text                ro code  0x00003334   0x128  pid.o [1]
+  .text                ro code  0x0000345c    0x90  motor.o [1]
+  .text                ro code  0x000034ec    0x9c  ADC.o [1]
+  .text                ro code  0x00003588   0x158  PLL.o [1]
+  .text                ro code  0x000036e0   0x118  vectors.o [1]
+  .text                ro code  0x000037f8    0x28  printf.o [3]
+  .text                ro code  0x00003820    0xc4  start.o [1]
+  .text                ro code  0x000038e4    0x38  wdog.o [1]
+  .text                ro code  0x0000391c    0x1c  main.o [1]
+  .text                ro code  0x00003938     0xc  common.o [1]
+  CodeRelocate                  0x00003944    0x70  <Block>
+    Initializer bytes  const    0x00003944    0x70  <for CodeRelocateRam-1>
+  .data_init                    0x000039b4    0x68  <Block>
+    Initializer bytes  const    0x000039b4    0x68  <for .data-1>
+  .text                ro code  0x00003a1c    0x40  zero_init3.o [5]
+  .rodata              const    0x00003a5c    0x30  vectors.o [1]
+  .text                ro code  0x00003a8c    0x28  data_init.o [5]
+  .rodata              const    0x00003ab4    0x24  vectors.o [1]
+  .text                ro code  0x00003ad8    0x22  fpinit_M.o [4]
+  .text                ro code  0x00003afa    0x22  iarwrite.o [6]
+  .iar.init_table      const    0x00003b1c    0x10  - Linker created -
+  .text                ro code  0x00003b2c    0x20  putchar.o [3]
+  .text                ro code  0x00003b4c    0x10  write.o [6]
+  .text                ro code  0x00003b5c    0x1e  dwrite.o [6]
+  .text                ro code  0x00003b7a    0x20  iarwstd.o [6]
+  .text                ro code  0x00003b9c    0x1e  cmain.o [5]
+  .text                ro code  0x00003bba     0x4  low_level_init.o [3]
+  .text                ro code  0x00003bbe     0x4  exit.o [3]
+  .text                ro code  0x00003bc4     0xa  cexit.o [5]
+  .rodata              const    0x00003bd0    0x18  vectors.o [1]
+  .text                ro code  0x00003be8    0x16  xprout.o [3]
+  .rodata              const    0x00003c00    0x10  LQMT9V034.o [1]
+  .rodata              const    0x00003c10     0xc  LQMT9V034.o [1]
+  .rodata              const    0x00003c1c     0xc  LQMT9V034.o [1]
+  .rodata              const    0x00003c28     0xc  vectors.o [1]
+  .rodata              const    0x00003c34     0xc  vectors.o [1]
+  .rodata              const    0x00003c40     0xc  vectors.o [1]
+  .rodata              const    0x00003c4c     0xc  vectors.o [1]
+  .rodata              const    0x00003c58     0xc  vectors.o [1]
+  .rodata              const    0x00003c64     0xc  vectors.o [1]
+  .rodata              const    0x00003c70     0xc  vectors.o [1]
+  .rodata              const    0x00003c7c     0xc  vectors.o [1]
+  .rodata              const    0x00003c88     0xc  vectors.o [1]
+  .rodata              const    0x00003c94     0xc  vectors.o [1]
+  .rodata              const    0x00003ca0     0xc  vectors.o [1]
+  .rodata              const    0x00003cac     0xc  vectors.o [1]
+  .rodata              const    0x00003cb8     0xc  vectors.o [1]
+  .text                ro code  0x00003cc4     0xc  cstartup_M.o [5]
+                              - 0x00003cd0  0x3844
 
-"P2", part 1 of 2:                            0x7c
-  .data                         0x1fff0410    0x54  <Block>
-    .data-1                     0x1fff0410    0x54  <Init block>
-      .data            inited   0x1fff0410     0x8  ADC.o [1]
-      .data            inited   0x1fff0418    0x10  FTM.o [1]
-      .data            inited   0x1fff0428     0x4  pid.o [1]
-      .data            inited   0x1fff042c    0x14  port.o [1]
-      .data            inited   0x1fff0440    0x14  UART.o [1]
-      .data            inited   0x1fff0454     0x8  UART.o [1]
-      .data            inited   0x1fff045c     0x8  XShttio.o [3]
-  CodeRelocateRam               0x1fff0464    0x28  <Block>
-    CodeRelocateRam-1           0x1fff0464    0x28  <Init block>
-      .textrw          inited   0x1fff0464    0x28  DMA.o [1]
-                              - 0x1fff048c    0x7c
+"P2", part 1 of 2:                            0xd8
+  CodeRelocateRam               0x1fff0410    0x70  <Block>
+    CodeRelocateRam-1           0x1fff0410    0x70  <Init block>
+      .textrw          inited   0x1fff0410    0x28  DMA.o [1]
+      .textrw          inited   0x1fff0438    0x48  LQMT9V034.o [1]
+  .data                         0x1fff0480    0x68  <Block>
+    .data-1                     0x1fff0480    0x68  <Init block>
+      .data            inited   0x1fff0480     0x8  ADC.o [1]
+      .data            inited   0x1fff0488    0x10  FTM.o [1]
+      .data            inited   0x1fff0498    0x14  GPIO.o [1]
+      .data            inited   0x1fff04ac     0x4  pid.o [1]
+      .data            inited   0x1fff04b0    0x14  port.o [1]
+      .data            inited   0x1fff04c4    0x14  UART.o [1]
+      .data            inited   0x1fff04d8     0x8  UART.o [1]
+      .data            inited   0x1fff04e0     0x8  XShttio.o [3]
+                              - 0x1fff04e8    0xd8
 
-"P2", part 2 of 2:                          0x5864
-  .bss                          0x1fff048c  0x5864  <Block>
-    .bss               zero     0x1fff048c    0x10  FTM.o [1]
-    .bss               zero     0x1fff049c  0x5820  LQMT9V034.o [1]
-    .bss               zero     0x1fff5cbc     0x4  pid.o [1]
-    .bss               zero     0x1fff5cc0     0x4  pid.o [1]
-    .bss               zero     0x1fff5cc4     0x4  pid.o [1]
-    .bss               zero     0x1fff5cc8     0x4  pid.o [1]
-    .bss               zero     0x1fff5ccc     0x4  PLL.o [1]
-    .bss               zero     0x1fff5cd0     0x4  PLL.o [1]
-    .bss               zero     0x1fff5cd4    0x14  UART.o [1]
-    .bss               zero     0x1fff5ce8     0x4  xfail_s.o [3]
-    .bss               zero     0x1fff5cec     0x1  LQMT9V034.o [1]
-    .bss               zero     0x1fff5ced     0x1  LQMT9V034.o [1]
-    .bss               zero     0x1fff5cee     0x1  XShttio.o [3]
-                              - 0x1fff5cf0  0x5864
+"P2", part 2 of 2:                          0x8490
+  .bss                          0x1fff04e8  0x8490  <Block>
+    .bss               zero     0x1fff04e8    0x10  FTM.o [1]
+    .bss               zero     0x1fff04f8     0x4  isr.o [1]
+    .bss               zero     0x1fff04fc     0x4  isr.o [1]
+    .bss               zero     0x1fff0500     0x4  isr.o [1]
+    .bss               zero     0x1fff0504     0x4  isr.o [1]
+    .bss               zero     0x1fff0508     0x4  isr.o [1]
+    .bss               zero     0x1fff050c     0x4  isr.o [1]
+    .bss               zero     0x1fff0510     0x4  isr.o [1]
+    .bss               zero     0x1fff0514  0x5820  LQMT9V034.o [1]
+    .bss               zero     0x1fff5d34  0x1608  LQMT9V034.o [1]
+    .bss               zero     0x1fff733c  0x1608  LQMT9V034.o [1]
+    .bss               zero     0x1fff8944     0x4  pid.o [1]
+    .bss               zero     0x1fff8948     0x4  pid.o [1]
+    .bss               zero     0x1fff894c     0x4  pid.o [1]
+    .bss               zero     0x1fff8950     0x4  pid.o [1]
+    .bss               zero     0x1fff8954     0x4  PLL.o [1]
+    .bss               zero     0x1fff8958     0x4  PLL.o [1]
+    .bss               zero     0x1fff895c    0x14  UART.o [1]
+    .bss               zero     0x1fff8970     0x4  xfail_s.o [3]
+    .bss               zero     0x1fff8974     0x1  LQMT9V034.o [1]
+    .bss               zero     0x1fff8975     0x1  LQMT9V034.o [1]
+    .bss               zero     0x1fff8976     0x1  LQMT9V034.o [1]
+    .bss               zero     0x1fff8977     0x1  XShttio.o [3]
+                              - 0x1fff8978  0x8490
 
 
 *******************************************************************************
@@ -202,8 +220,8 @@ initialize manually with packing = copy, complex ranges { section .textrw };
           Address     Size
           -------     ----
 Zero (__iar_zero_init3)
-    1 destination range, total size 0x5863:
-          0x1fff048c  0x5863
+    1 destination range, total size 0x8490:
+          0x1fff04e8  0x8490
 
 
 
@@ -215,23 +233,25 @@ Zero (__iar_zero_init3)
     ------              -------  -------  -------  -------
 D:\智能车\znc\Debug\Obj: [1]
     ADC.o                   156                 8        8
-    DMA.o                             40       40
-    FTM.o                   436                16       32
-    LQMT9V034.o             148                     22 562
+    DMA.o                   464       40       40
+    FTM.o                   180                16       32
+    GPIO.o                  196                20       20
+    LQMT9V034.o           2 144       72      112   33 843
     PLL.o                   344                          8
     UART.o                1 168                28       48
     common.o                 12
     crt0.o                  124
-    isr.o                   244                48
-    lptmr.o                  92
-    main.o                   88                28
-    pid.o                   136                 4       20
+    exti.o                  116
+    isr.o                   376                         28
+    main.o                   28
+    motor.o                 144
+    pid.o                   296                 4       20
     port.o                   84                20       20
     start.o                 196
     vectors.o               280               728
     wdog.o                   56
     ------------------------------------------------------
-    Total:                3 564       40      920   22 698
+    Total:                6 364      112      976   34 027
 
 command line: [2]
     ------------------------------------------------------
@@ -244,13 +264,14 @@ dl7M_tln.a: [3]
     low_level_init.o          4
     printf.o                 40
     putchar.o                32
+    sprintf.o                64
     vsprintf.o               56
     xfail_s.o                64                          4
     xprintffull_nomb.o    3 618
     xprout.o                 22
     xsprout.o                10
     ------------------------------------------------------
-    Total:                3 916                 8       13
+    Total:                3 980                 8       13
 
 m7M_tls.a: [4]
     DblAdd.o                360
@@ -295,9 +316,9 @@ shb_l.a: [6]
     Total:                  256
 
     Gaps                     30                 4
-    Linker created            8                16
+    Linker created           16                16
 ----------------------------------------------------------
-    Grand Total:         11 116       40      948   22 711
+    Grand Total:         13 988      112    1 004   34 040
 
 
 *******************************************************************************
@@ -306,54 +327,79 @@ shb_l.a: [6]
 
 Entry                      Address    Size  Type      Object
 -----                      -------    ----  ----      ------
-.bss$$Base              0x1fff048c           --   Gb  - Linker created -
-.bss$$Limit             0x1fff5cf0           --   Gb  - Linker created -
-.data$$Base             0x1fff0410           --   Gb  - Linker created -
-.data$$Limit            0x1fff0464           --   Gb  - Linker created -
-.data_init$$Base        0x00002e0c           --   Gb  - Linker created -
-.data_init$$Limit       0x00002e60           --   Gb  - Linker created -
-.iar.init_table$$Base   0x00002fb8           --   Gb  - Linker created -
-.iar.init_table$$Limit  0x00002fc8           --   Gb  - Linker created -
-?main                   0x00003039          Code  Gb  cmain.o [5]
-ADCN                    0x1fff0410     0x8  Data  Gb  ADC.o [1]
-CodeRelocate$$Base      0x00002f28           --   Gb  - Linker created -
-CodeRelocate$$Limit     0x00002f50           --   Gb  - Linker created -
-CodeRelocateRam$$Base   0x1fff0464           --   Gb  - Linker created -
-CodeRelocateRam$$Limit  0x1fff048c           --   Gb  - Linker created -
-DMA0_ISR                0x00002a0d     0x2  Code  Gb  isr.o [1]
-DMATransDataStart       0x1fff0465    0x1e  Code  Gb  DMA.o [1]
-FTM0_ISR                0x00002a0f    0x10  Code  Gb  isr.o [1]
-FTMN                    0x1fff0418    0x10  Data  Gb  FTM.o [1]
-Field_Over_Flag         0x1fff5ced     0x1  Data  Gb  LQMT9V034.o [1]
-Image_Data              0x1fff049c  0x5820  Data  Gb  LQMT9V034.o [1]
-LPTMR_ISR               0x00002a0b     0x2  Code  Gb  isr.o [1]
-LPTMR_delay_ms          0x00002d1f    0x42  Code  Gb  lptmr.o [1]
-Line_Cont               0x1fff5cec     0x1  Data  Gb  LQMT9V034.o [1]
+.bss$$Base              0x1fff04e8           --   Gb  - Linker created -
+.bss$$Limit             0x1fff8978           --   Gb  - Linker created -
+.data$$Base             0x1fff0480           --   Gb  - Linker created -
+.data$$Limit            0x1fff04e8           --   Gb  - Linker created -
+.data_init$$Base        0x000039b4           --   Gb  - Linker created -
+.data_init$$Limit       0x00003a1c           --   Gb  - Linker created -
+.iar.init_table$$Base   0x00003b1c           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x00003b2c           --   Gb  - Linker created -
+?main                   0x00003b9d          Code  Gb  cmain.o [5]
+ADCN                    0x1fff0480     0x8  Data  Gb  ADC.o [1]
+CodeRelocate$$Base      0x00003944           --   Gb  - Linker created -
+CodeRelocate$$Limit     0x000039b4           --   Gb  - Linker created -
+CodeRelocateRam$$Base   0x1fff0410           --   Gb  - Linker created -
+CodeRelocateRam$$Limit  0x1fff0480           --   Gb  - Linker created -
+DMA0_ISR                0x00003179     0x2  Code  Gb  isr.o [1]
+DMATransDataStart       0x1fff0411    0x1e  Code  Gb  DMA.o [1]
+FTM0_ISR                0x0000317b    0x10  Code  Gb  isr.o [1]
+FTMN                    0x1fff0488    0x10  Data  Gb  FTM.o [1]
+Field_Over_Flag         0x1fff8976     0x1  Data  Gb  LQMT9V034.o [1]
+GPIOX                   0x1fff0498    0x14  Data  Gb  GPIO.o [1]
+Get_01_Value            0x00002417    0xac  Code  Gb  LQMT9V034.o [1]
+Get_Use_Image           0x1fff0439    0x48  Code  Gb  LQMT9V034.o [1]
+Image_Data              0x1fff0514  0x5820  Data  Gb  LQMT9V034.o [1]
+Image_Use               0x1fff5d34  0x1608  Data  Gb  LQMT9V034.o [1]
+LPTMR_ISR               0x00003177     0x2  Code  Gb  isr.o [1]
+LQMT9V034_Init          0x00002111   0x20a  Code  Gb  LQMT9V034.o [1]
+Line_Cont               0x1fff8975     0x1  Data  Gb  LQMT9V034.o [1]
 LoadInt                 0x0000063f    0x7a  Code  Lc  xprintffull_nomb.o [3]
-NVIC_DisableIRQ         0x0000204b    0x16  Code  Lc  UART.o [1]
-NVIC_EnableIRQ          0x00002035    0x16  Code  Lc  UART.o [1]
-PIT0_ISR                0x00002a1f    0x5c  Code  Gb  isr.o [1]
-PLL_Init                0x00002705   0x158  Code  Gb  PLL.o [1]
-PORTA_ISR               0x000029e7     0x2  Code  Gb  isr.o [1]
-PORTB_ISR               0x000029e9    0x1e  Code  Gb  isr.o [1]
-PORTC_ISR               0x00002a07     0x2  Code  Gb  isr.o [1]
-PORTD_ISR               0x00002d79    0x82  Code  Gb  LQMT9V034.o [1]
-PORTE_ISR               0x00002a09     0x2  Code  Gb  isr.o [1]
-PORTX                   0x1fff042c    0x14  Data  Gb  port.o [1]
-Region$$Table$$Base     0x00002fb8           --   Gb  - Linker created -
-Region$$Table$$Limit    0x00002fc8           --   Gb  - Linker created -
-UART0_ISR               0x0000299d     0x2  Code  Gb  isr.o [1]
-UART1_ISR               0x0000299f     0x2  Code  Gb  isr.o [1]
-UART2_ISR               0x000029a1     0x2  Code  Gb  isr.o [1]
-UART3_ISR               0x000029a3     0x2  Code  Gb  isr.o [1]
-UART4_ISR               0x000029a5    0x42  Code  Gb  isr.o [1]
-UARTN                   0x1fff0440    0x14  Data  Gb  UART.o [1]
-UART_IRQn               0x1fff0454     0x8  Data  Gb  UART.o [1]
+MT9V034_SetAutoExposure
+                        0x000023d5    0x42  Code  Gb  LQMT9V034.o [1]
+MT9V034_SetFrameResolution
+                        0x0000231b    0xba  Code  Gb  LQMT9V034.o [1]
+NVIC_DisableIRQ         0x000028b9    0x14  Code  Lc  exti.o [1]
+NVIC_DisableIRQ         0x0000292f    0x16  Code  Lc  UART.o [1]
+NVIC_EnableIRQ          0x000028a5    0x14  Code  Lc  exti.o [1]
+NVIC_EnableIRQ          0x00002919    0x16  Code  Lc  UART.o [1]
+PIT0_ISR                0x0000318b    0xca  Code  Gb  isr.o [1]
+PLL_Init                0x00003589   0x158  Code  Gb  PLL.o [1]
+PORTA_ISR               0x00003153     0x2  Code  Gb  isr.o [1]
+PORTB_ISR               0x00003155    0x1e  Code  Gb  isr.o [1]
+PORTC_ISR               0x00003173     0x2  Code  Gb  isr.o [1]
+PORTD_ISR               0x00002045    0x82  Code  Gb  LQMT9V034.o [1]
+PORTE_ISR               0x00003175     0x2  Code  Gb  isr.o [1]
+PORTX                   0x1fff04b0    0x14  Data  Gb  port.o [1]
+PWMSetMotor2            0x0000345d    0x8c  Code  Gb  motor.o [1]
+Pixle                   0x1fff733c  0x1608  Data  Gb  LQMT9V034.o [1]
+Region$$Table$$Base     0x00003b1c           --   Gb  - Linker created -
+Region$$Table$$Limit    0x00003b2c           --   Gb  - Linker created -
+SCCB_Ack                0x000026a1    0x50  Code  Lc  LQMT9V034.o [1]
+SCCB_Init               0x000024c3    0x18  Code  Gb  LQMT9V034.o [1]
+SCCB_NAck               0x000026f1    0x54  Code  Lc  LQMT9V034.o [1]
+SCCB_ReadByte           0x00002627    0x7a  Code  Gb  LQMT9V034.o [1]
+SCCB_RegRead            0x000027cd    0x5e  Code  Gb  LQMT9V034.o [1]
+SCCB_RegWrite           0x00002765    0x68  Code  Gb  LQMT9V034.o [1]
+SCCB_SendByte           0x00002591    0x96  Code  Gb  LQMT9V034.o [1]
+SCCB_Star               0x000024f1    0x54  Code  Gb  LQMT9V034.o [1]
+SCCB_Stop               0x00002545    0x4c  Code  Gb  LQMT9V034.o [1]
+SCCB_Wait               0x000024dd    0x14  Code  Gb  LQMT9V034.o [1]
+Test_LQV034             0x000020c7    0x4a  Code  Gb  LQMT9V034.o [1]
+Threshold               0x1fff8974     0x1  Data  Gb  LQMT9V034.o [1]
+UART0_ISR               0x00003109     0x2  Code  Gb  isr.o [1]
+UART1_ISR               0x0000310b     0x2  Code  Gb  isr.o [1]
+UART2_ISR               0x0000310d     0x2  Code  Gb  isr.o [1]
+UART3_ISR               0x0000310f     0x2  Code  Gb  isr.o [1]
+UART4_ISR               0x00003111    0x42  Code  Gb  isr.o [1]
+UARTN                   0x1fff04c4    0x14  Data  Gb  UART.o [1]
+UARTSendPicture         0x0000282b    0x50  Code  Gb  LQMT9V034.o [1]
+UART_IRQn               0x1fff04d8     0x8  Data  Gb  UART.o [1]
 _GenldFullNoMb          0x00000fad   0x274  Code  Lc  xprintffull_nomb.o [3]
 _LdtobFullNoMb          0x00000b81   0x3fe  Code  Lc  xprintffull_nomb.o [3]
 _LitobFullNoMb          0x00000a29   0x112  Code  Lc  xprintffull_nomb.o [3]
 _PrintfFullNoMb         0x0000048d   0x1a4  Code  Gb  xprintffull_nomb.o [3]
-_Prout                  0x000030a1    0x16  Code  Gb  xprout.o [3]
+_Prout                  0x00003be9    0x16  Code  Gb  xprout.o [3]
 _PutcharsFullNoMb       0x00001221    0x2e  Code  Lc  xprintffull_nomb.o [3]
 _PutfldFullNoMb         0x000006b9   0x264  Code  Lc  xprintffull_nomb.o [3]
 _PuttxtFullNoMb         0x0000091d   0x10c  Code  Lc  xprintffull_nomb.o [3]
@@ -376,8 +422,8 @@ __aeabi_memcpy4         0x00001795          Code  Gb  ABImemcpy.o [5]
 __aeabi_memcpy8         0x00001795          Code  Gb  ABImemcpy.o [5]
 __aeabi_ui2d            0x00001ddd          Code  Gb  U32ToDbl.o [4]
 __aeabi_uldivmod        0x000013a1          Code  Gb  I64DivMod.o [5]
-__cmain                 0x00003039          Code  Gb  cmain.o [5]
-__dwrite                0x00002ff9    0x1e  Code  Gb  dwrite.o [6]
+__cmain                 0x00003b9d          Code  Gb  cmain.o [5]
+__dwrite                0x00003b5d    0x1e  Code  Gb  dwrite.o [6]
 __exit                  0x00001f69    0x14  Code  Gb  exit.o [6]
 __hard_fault_handler_asm
                         0x0000044d          Code  Gb  crt0.o [1]
@@ -386,20 +432,20 @@ __iar_Memchr            0x00001349          Code  Gb  memchr.o [5]
 __iar_Strchr            0x000012b9          Code  Gb  strchr.o [5]
 __iar_close_ttio        0x00001f7d    0x2c  Code  Gb  iarttio.o [6]
 __iar_dadd              0x00001a99          Code  Gb  DblSub.o [4]
-__iar_data_init3        0x00002f01    0x28  Code  Gb  data_init.o [5]
+__iar_data_init3        0x00003a8d    0x28  Code  Gb  data_init.o [5]
 __iar_dsub              0x00001e01          Code  Gb  DblAdd.o [4]
 __iar_dsubStart         0x00001e13          Code  Gb  DblAdd.o [4]
 __iar_frexp             0x00001829          Code  Gb  frexp.o [4]
 __iar_frexpl            0x00001829          Code  Gb  frexp.o [4]
 __iar_get_ttio          0x00001fa9    0x4c  Code  Gb  iarttio.o [6]
-__iar_init_vfp          0x00002f75          Code  Gb  fpinit_M.o [4]
+__iar_init_vfp          0x00003ad9          Code  Gb  fpinit_M.o [4]
 __iar_ldexp64           0x000018ed          Code  Gb  ldexp.o [4]
 __iar_lookup_ttioh      0x00002027     0x4  Code  Gb  XShttio.o [3]
-__iar_program_start     0x00003155          Code  Gb  cstartup_M.o [5]
+__iar_program_start     0x00003cc5          Code  Gb  cstartup_M.o [5]
 __iar_scalbln64         0x000018ed          Code  Gb  ldexp.o [4]
 __iar_scalbn64          0x000018ed          Code  Gb  ldexp.o [4]
-__iar_sh_stdout         0x00003017    0x20  Code  Gb  iarwstd.o [6]
-__iar_sh_write          0x00002f97    0x22  Code  Gb  iarwrite.o [6]
+__iar_sh_stdout         0x00003b7b    0x20  Code  Gb  iarwstd.o [6]
+__iar_sh_write          0x00003afb    0x22  Code  Gb  iarwrite.o [6]
 __iar_softfp___iar_frexp64
                         0x0000181d          Code  Gb  frexp.o [4]
 __iar_softfp_frexp      0x0000181d          Code  Gb  frexp.o [4]
@@ -409,70 +455,82 @@ __iar_systems$$module {Abs}
 __iar_ttio_guard_lock   0x00001ff9    0x1e  Code  Gb  XShttio.o [3]
 __iar_ttio_guard_unlock
                         0x00002017    0x10  Code  Gb  XShttio.o [3]
-__iar_ttio_handles      0x1fff045c     0x8  Data  Lc  XShttio.o [3]
-__iar_zero_init3        0x00002e61    0x40  Code  Gb  zero_init3.o [5]
-__low_level_init        0x00003057     0x4  Code  Gb  low_level_init.o [3]
+__iar_ttio_handles      0x1fff04e0     0x8  Data  Lc  XShttio.o [3]
+__iar_zero_init3        0x00003a1d    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x00003bbb     0x4  Code  Gb  low_level_init.o [3]
 __startup               0x00000411          Code  Gb  crt0.o [1]
 __vector_table          0x00000000   0x1d0  Data  Gb  vectors.o [1]
-__write                 0x00002fe9    0x10  Code  Gb  write.o [6]
-_call_main              0x00003045          Code  Gb  cmain.o [5]
-_exit                   0x00003061          Code  Gb  cexit.o [5]
-_main                   0x00003053          Code  Gb  cmain.o [5]
+__write                 0x00003b4d    0x10  Code  Gb  write.o [6]
+_call_main              0x00003ba9          Code  Gb  cmain.o [5]
+_exit                   0x00003bc5          Code  Gb  cexit.o [5]
+_main                   0x00003bb7          Code  Gb  cmain.o [5]
 abort                   0x00001df7     0x6  Code  Gb  abort.o [3]
-abort_isr               0x0000286d    0x16  Code  Gb  vectors.o [1]
-accerror                0x1fff5cc0     0x4  Data  Gb  pid.o [1]
-adc_once                0x00002a91    0x4c  Code  Gb  ADC.o [1]
-adc_start               0x00002add    0x4a  Code  Lc  ADC.o [1]
-bus_clk_M               0x1fff5cd0     0x4  Data  Gb  PLL.o [1]
-common_startup          0x00002bd7    0x74  Code  Gb  start.o [1]
-core_clk_M              0x1fff5ccc     0x4  Data  Gb  PLL.o [1]
-default_isr             0x0000285d    0x10  Code  Gb  vectors.o [1]
-direction_control       0x00002b2d    0x88  Code  Gb  pid.o [1]
-direction_d             0x1fff5cc8     0x4  Data  Gb  pid.o [1]
-direction_i             0x1fff5cc4     0x4  Data  Gb  pid.o [1]
-direction_p             0x1fff0428     0x4  Data  Gb  pid.o [1]
-exit                    0x0000305b     0x4  Code  Gb  exit.o [3]
-ftm_mod                 0x1fff048c    0x10  Data  Lc  FTM.o [1]
-ftm_pwm_duty            0x000024fd    0x8e  Code  Gb  FTM.o [1]
-ftm_quad_clean          0x00002693     0xe  Code  Gb  FTM.o [1]
-ftm_quad_get            0x00002685     0xe  Code  Gb  FTM.o [1]
-ftm_quad_init           0x0000258b    0xfa  Code  Gb  FTM.o [1]
-hard_fault_handler_c    0x00002883    0x96  Code  Gb  vectors.o [1]
-lasterror               0x1fff5cbc     0x4  Data  Gb  pid.o [1]
+abort_isr               0x000036f1    0x16  Code  Gb  vectors.o [1]
+accerror                0x1fff8948     0x4  Data  Gb  pid.o [1]
+adc_once                0x000034ed    0x4c  Code  Gb  ADC.o [1]
+adc_start               0x00003539    0x4a  Code  Lc  ADC.o [1]
+bus_clk_M               0x1fff8958     0x4  Data  Gb  PLL.o [1]
+common_startup          0x00003843    0x74  Code  Gb  start.o [1]
+core_clk_M              0x1fff8954     0x4  Data  Gb  PLL.o [1]
+default_isr             0x000036e1    0x10  Code  Gb  vectors.o [1]
+direction_control       0x00003335    0x72  Code  Gb  pid.o [1]
+direction_d             0x1fff8950     0x4  Data  Gb  pid.o [1]
+direction_i             0x1fff894c     0x4  Data  Gb  pid.o [1]
+direction_p             0x1fff04ac     0x4  Data  Gb  pid.o [1]
+dma_gpio_input_init     0x00002e6d    0x4c  Code  Lc  DMA.o [1]
+dma_portx2buff_init     0x00002eb9   0x164  Code  Gb  DMA.o [1]
+exit                    0x00003bbf     0x4  Code  Gb  exit.o [3]
+exti_disable            0x000028f9    0x20  Code  Gb  exti.o [1]
+exti_enable             0x000028d5    0x24  Code  Gb  exti.o [1]
+ftm_mod                 0x1fff04e8    0x10  Data  Lc  FTM.o [1]
+ftm_pwm_duty            0x00003281    0x8e  Code  Gb  FTM.o [1]
+ftm_quad_clean          0x0000331d     0xe  Code  Gb  FTM.o [1]
+ftm_quad_get            0x0000330f     0xe  Code  Gb  FTM.o [1]
+gpio_init               0x00002da9    0xbe  Code  Gb  GPIO.o [1]
+hard_fault_handler_c    0x00003707    0x96  Code  Gb  vectors.o [1]
+lasterror               0x1fff8944     0x4  Data  Gb  pid.o [1]
 ldexp                   0x000018ed          Code  Gb  ldexp.o [4]
 ldexpl                  0x000018ed          Code  Gb  ldexp.o [4]
-main                    0x00002cb1    0x58  Code  Gb  main.o [1]
+left_speed_in           0x1fff04fc     0x4  Data  Gb  isr.o [1]
+left_speed_out          0x1fff0500     0x4  Data  Gb  isr.o [1]
+main                    0x0000391d    0x1c  Code  Gb  main.o [1]
 memchr                  0x00001349          Code  Gb  memchr.o [5]
-port_init               0x000026b1    0x4a  Code  Gb  port.o [1]
-printf                  0x00002975    0x28  Code  Gb  printf.o [3]
-putchar                 0x00002fc9    0x20  Code  Gb  putchar.o [3]
+pid1                    0x1fff050c     0x4  Data  Gb  isr.o [1]
+pid2                    0x1fff0510     0x4  Data  Gb  isr.o [1]
+pid_compute             0x000033bd    0xa0  Code  Gb  pid.o [1]
+port_init               0x0000307d    0x4a  Code  Gb  port.o [1]
+printf                  0x000037f9    0x28  Code  Gb  printf.o [3]
+putchar                 0x00003b2d    0x20  Code  Gb  putchar.o [3]
+right_speed_in          0x1fff0504     0x4  Data  Gb  isr.o [1]
+right_speed_out         0x1fff0508     0x4  Data  Gb  isr.o [1]
 scalbln                 0x000018ed          Code  Gb  ldexp.o [4]
 scalblnl                0x000018ed          Code  Gb  ldexp.o [4]
 scalbn                  0x000018ed          Code  Gb  ldexp.o [4]
 scalbnl                 0x000018ed          Code  Gb  ldexp.o [4]
 scale                   0x00000b3b    0x46  Code  Lc  xprintffull_nomb.o [3]
-sec_hand                0x1fff5ce8     0x4  Data  Lc  xfail_s.o [3]
+sec_hand                0x1fff8970     0x4  Data  Lc  xfail_s.o [3]
 set_pit                 0x0000045f          Code  Gb  crt0.o [1]
-start                   0x00002bb5    0x22  Code  Gb  start.o [1]
+sprintf                 0x0000303d    0x40  Code  Gb  sprintf.o [3]
+start                   0x00003821    0x22  Code  Gb  start.o [1]
 strchr                  0x000012b9          Code  Gb  strchr.o [5]
 strlen                  0x00001311          Code  Gb  strlen.o [5]
-time_delay_ms           0x00002d15     0xa  Code  Gb  lptmr.o [1]
-ttio_guard              0x1fff5cee     0x1  Data  Lc  XShttio.o [3]
-uart_getchar            0x00002259    0x20  Code  Gb  UART.o [1]
-uart_init               0x00002061   0x1f8  Code  Gb  UART.o [1]
-uart_printf             0x00002337    0x22  Code  Gb  UART.o [1]
-uart_putchar            0x00002279    0x3c  Code  Gb  UART.o [1]
-uart_putstr             0x000022b5    0x1c  Code  Gb  UART.o [1]
-uart_sendbuff           0x1fff5cd4    0x14  Data  Gb  UART.o [1]
-uart_sendbuffer_isr     0x00002359    0x8c  Code  Gb  UART.o [1]
+time_count              0x1fff04f8     0x4  Data  Gb  isr.o [1]
+ttio_guard              0x1fff8977     0x1  Data  Lc  XShttio.o [3]
+uart_getchar            0x00002b3d    0x20  Code  Gb  UART.o [1]
+uart_init               0x00002945   0x1f8  Code  Gb  UART.o [1]
+uart_printf             0x00002c1b    0x22  Code  Gb  UART.o [1]
+uart_putchar            0x00002b5d    0x3c  Code  Gb  UART.o [1]
+uart_putstr             0x00002b99    0x1c  Code  Gb  UART.o [1]
+uart_sendbuff           0x1fff895c    0x14  Data  Gb  UART.o [1]
+uart_sendbuffer_isr     0x00002c3d    0x8c  Code  Gb  UART.o [1]
 uart_sendbuffer_putchar
-                        0x000023e5    0x90  Code  Gb  UART.o [1]
-uart_tx_irq_dis         0x000022fd    0x3a  Code  Gb  UART.o [1]
-uart_tx_irq_en          0x000022d1    0x2c  Code  Gb  UART.o [1]
-vsprintf                0x000024c5    0x38  Code  Gb  vsprintf.o [3]
-wdog_disable            0x00002c79    0x16  Code  Gb  wdog.o [1]
-wdog_unlock             0x00002c91    0x16  Code  Gb  wdog.o [1]
-write_vtor              0x00002d09     0x6  Code  Gb  common.o [1]
+                        0x00002cc9    0x90  Code  Gb  UART.o [1]
+uart_tx_irq_dis         0x00002be1    0x3a  Code  Gb  UART.o [1]
+uart_tx_irq_en          0x00002bb5    0x2c  Code  Gb  UART.o [1]
+vsprintf                0x000030d1    0x38  Code  Gb  vsprintf.o [3]
+wdog_disable            0x000038e5    0x16  Code  Gb  wdog.o [1]
+wdog_unlock             0x000038fd    0x16  Code  Gb  wdog.o [1]
+write_vtor              0x00003939     0x6  Code  Gb  common.o [1]
 
 
 [1] = D:\智能车\znc\Debug\Obj
@@ -482,10 +540,10 @@ write_vtor              0x00002d09     0x6  Code  Gb  common.o [1]
 [5] = rt7M_tl.a
 [6] = shb_l.a
 
-  11 116 bytes of readonly  code memory
-      40 bytes of readwrite code memory
-     948 bytes of readonly  data memory
-  22 711 bytes of readwrite data memory
+  13 988 bytes of readonly  code memory
+     112 bytes of readwrite code memory
+   1 004 bytes of readonly  data memory
+  34 040 bytes of readwrite data memory
 
 Errors: none
 Warnings: none
