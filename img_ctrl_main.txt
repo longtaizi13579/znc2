@@ -1,0 +1,136 @@
+//图控
+for(;;) 
+	{
+	  ///////////////////////////////图像采集部分///////////////////////////////
+			clearDelPar();//清零处理参数
+			for(line=0;line<PIC_H;line++)
+			{
+			  Bline_left[line]=V/2;
+			  Bline_right[line]=V/2;
+			  Pick_flag[line]=0;//赛道标志清零
+			  Deal_flag[line]=0;//处理标志清零
+			  //row_F[line]=0;//清除采集完成标志位
+			}
+			TEST_IO_H;
+			for(line=0;line<H;line++) //提取各行中心点并处理意外
+			{
+				while(row_F[line]==0);//等待该行采样完成
+				row_F[line]=0;//清除采集完成标志位
+				Binary_line(line);//二值化该采集行
+				
+				if(line==4)
+				{
+					//PickCenter_near(); 
+				  	Near_lost=PickCenter_near();
+				  	if(Near_lost==1)
+					{
+					  Far_find_flag=FAR_FIND_MIDDLE;
+					  //Shi_zi_line=4;
+					}
+				}
+				if(line>=5)
+				{
+				  PickCenter_diff(line);
+				  if(lost_w_count>2)
+				  {
+					
+				  }
+				  
+				}
+////////////////////////////////十字判别式///////////////////////////////////////
+				if((Pick_flag[line]&ALL_LOST_W))//两边都找不到线且寻到为全白行数统计
+				{
+					lost_w_count++;
+					//Shi_zi_flag=1;
+					//buzzer_on();
+				}
+				if(Shi_zi_flag==0&&lost_already==0)//在有效行丢失之前判断丢白线数判断十字道
+				{
+				    if(lost_w_count>5)
+					{
+					  Shi_zi_flag=1;
+					  buzzer_on();
+					}
+				}
+///////////////////////////有效行判断//////////////////////////////////////////
+				if((Pick_flag[line]&LEFT_LOST_B)||(Pick_flag[line]&RIGHT_LOST_B))
+				{
+				  if((Pick_flag[line-1]&LEFT_LOST_B)||(Pick_flag[line-1]&RIGHT_LOST_B))
+					lost_b_count++;
+				}
+				if(line<25)
+				{
+				  if(maxBline_diff<Bline_diff)
+				  	maxBline_diff=Bline_diff;
+				}
+				if(lost_already==0)
+				{
+					if(lost_b_count>3||(Bline_left[line]<15)||(Bline_right[line]>(V-15)))
+					{
+						lost_already=1;
+						judge_vl=line-5;
+					}
+				}
+			 }
+			TEST_IO_L;
+	  //////////////////////////////图像处理及控制部分//////////////////////////
+			//valid_line=89-Lost_Line_count;
+			 stable_del();
+			 run_time++;
+			 if(run_time%10==0)
+			 {
+			   switch(DisImg_flag)
+			   {
+					case 0:
+					{
+					   display1();
+			  	 		//lcd_int(8,"l:",(int)Bline_left[4]-Bline_left[0]);
+						//lcd_int(72,"r:",(int)Bline_right[4]-Bline_right[0]);
+					   /*if(last_area!=area&&abs_sub(last_area,area)>1)
+					   {
+						 lcd_int(8,"Xl:",(int)area);
+						 last_area=area;
+					   }*/
+					   lcd_int(8,"df:",(int)even_diff);
+					 }break;
+			   		case 1:{displayBlineSimple();} break;
+			   		case 2:{displayBinary();} break;
+			   		case 3:
+					{
+					  if((run_time%100)<50)
+					  {
+						displayBline();
+					  }
+					  else
+					  {
+						displayBinary();
+					  }
+					}break;
+			   		case 4:{displayPar();
+					LCD_P6x8Int(8,5,"lw",lost_w_count);
+					LCD_P6x8Int(64,5,"mj:",(int)whole_area);
+					LCD_P6x8Int(8,6,"tx:",(int)(tx_area));
+					if(S_road_flag==1)
+						LCD_P6x8Str(64,6,"sroad");
+					else
+					    LCD_P6x8Str(64,6,"     ");
+					LCD_P6x8Int(8,7,"po:",(int)(positive_num));
+					LCD_P6x8Int(64,7,"de:",(int)(decrease_num));
+					}break;
+				   	default:; break;//关闭显示
+			   }
+			 }
+			//put_image_1();
+			 ///////////////////文件存储/////////////////////
+#if	SAVE_FLASH_DATA == 1
+			 if(run_time%3==0)
+			 {
+			     save_bline();
+			 }
+#endif
+			 //LED_H;
+			 //uart_send1(UART0,Bmq);
+			 //OutData[0]++;
+			 //OutPut_Data();
+	}
+}   

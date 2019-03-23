@@ -1,0 +1,151 @@
+unsigned int row=0;	//摄像头行计数，最大240
+uint8 video[H][V];	//存放数据数组
+uint8 video_deal[H][V];	//存放数据数组
+uint16 Bline_left[H];	 //左边线存放数组
+uint16 Bline_right[H];	 //右边线存放数组
+uint16 Pick_table[H];	 //中心线存放数组
+uint16 PrBline_left[H];  //原始的左边线存放数组
+uint16 PrBline_right[H]; //原始的右边线存放数组
+uint8  Pick_flag[H];//该行是否找到黑线标志数组
+uint8  Deal_flag[H];//处理数据是否有效标志数组
+uint16 lost_already=0;
+uint8 Pick_line=0;
+//uint8 PickCenter_flag=0;	//提取中线标志
+uint8 Lost_Line_count=0;
+uint8 Lost_left_count=0;
+uint8 Lost_right_count=0;
+uint8 Near_lost=0;//近处丢失标志
+uint8 Shi_zi_line=0;
+uint8 Shi_zi_num=0;
+uint8 Shi_zi_flag=0;
+uint8 positive_num=0;
+uint8 decrease_num=0;
+uint16 last_position=V/2;
+uint8 stop_num=0;
+int Position_diff=0;
+float biLi=1.0;
+unsigned int const data_table[H]={
+  5, 10, 15, 20, 25, 30, 35, 40, 45, 50,
+ 55, 60, 65, 70, 75, 80, 85, 90, 95,100,
+103,106,109,112,115,118,121,124,127,130,
+133,136,139,142,145,148,151,154,157,160,
+163,166,169,172,175,178,181,184,187,190,
+193,196,199,202,205,208,211,214,217,220
+};//需采集数据的行
+uint8 Cmp=160;	//黑线阈值
+uint8 row_F[H];	//该行采集完成标志
+char startline_F;	//发现起始行
+char endline_F;	//发现结束行 
+unsigned int imagerow=0;	//采集行计数，最大H
+uint8 Out_flag=0;		//出界标志，无效图像标志
+uint8 start_write=160;   //起跑线白色阈值
+uint8 liangdu=100;	//摄像头亮度
+
+uint8 last_vline;
+uint8 valid_line=60;//最大有效行
+uint8 judge_vl;//用于判断的有效行
+uint8 last_lost=55;	//上一场丢失行
+uint8 baoguang=0x50;	//曝光时间值
+uint8 Enter_shi_zi=0;//进入十字标志
+uint16 Bline_diff=0;//两黑线距离
+uint16 maxBline_diff=0;
+uint16 LR_diff=0;
+uint32 whole_area=0;
+uint32 tx_area=0;
+
+int far_diff=0;	//远端相对偏移量 作方向和直道长度判断
+uint8 zhidao_speed=55;	//直道速度
+uint8 CD_speed=40;	//全局速度
+uint8 all_speed_flag=5;   //全局速度标志
+
+uint8 slow_down_num=0;//减速标志
+int judge_xielv[H-5];	//斜率判断数组
+uint8 buzzer_num=0;	//蜂鸣器次数
+uint8 buzzer_flag=0;	//蜂鸣器响应标志
+uint8 zhidao_count_flag=0;	//直道判断标志
+uint8 last_zhidao_flag=0;
+uint8 start_end_flag=0;	//起跑线标志
+uint8 roadFlag=0;//赛道标志
+uint8 last_roadFlag=0;
+uint8 temp_shizi=0;//零时用
+uint32 run_time=0;//程序运行时间（次数）
+uint8 ls_flag=0;//小S标志
+uint8 S_road_flag=0;//S弯标志
+uint8 pick_way=1;	//方向变量 左为0 右为2 中间为1
+uint8 last_pick_way=1;//
+uint8 lost_w_count=0;//白色丢失行变量
+uint8 lost_b_count=0;//黑色丢失行变量
+int near_xielv_left=0;
+int near_xielv_right=0;
+
+int even_diff=0;	//中心线平均偏差
+int even_diff_near=0;
+int even_diff1=0;   //
+float dj_Kp=1;	//舵机Kp值
+int D_slope_near=0;		//舵机斜率控制值
+int D_slope=0;		//舵机斜率控制值
+int Curve=0;		//Curve(曲线，判断)值
+int Curve_near=0;		//Curve(曲线，判断)值
+int Curve_middle=0;		//Curve(曲线，判断)值
+int Curve_far=0;		//Curve(曲线，判断)值
+
+int jiaodu_num=dj_center;	//角度值
+int last_turn=dj_center;	//上一次转向值
+int dj_pid_num=dj_center;	//舵机角度值
+
+uint8 set_flag=1;//设置标志位
+uint32 switch_key=0;	//拨码开关，IO端口值
+uint8 par_num=4;	//设置参数编号，4为全局速度
+uint8 last_par_num=0;	//上一次设置参数，作清屏用  
+uint8 ctl_num=0;//控制标志 0为新控制，1为老控制
+uint8 xianshi=2;//显示参数
+uint8 init_7620_flag=1;	//OV7620设置标志位
+uint8 flash_flag=0;//Flash标志
+uint8 DisImg_flag=0;//显示图像标志
+uint8 Far_find_flag=0;//
+uint16 save_data_num=0;
+uint8 save_file_num=0;
+
+ParValue myPar_num;
+
+/*******************************************************************************
+函数名称：get_vline
+函数功能: 得到有效行
+参数：无
+*******************************************************************************/
+void get_vline()
+{
+  if(Shi_zi_num==0)
+  {
+	valid_line=judge_vl;
+  }
+  else 
+  {
+	valid_line=55;
+  }
+}
+/*******************************************************************************
+函数名称：clearDelPar
+函数功能: 清零处理参数
+参数：无
+*******************************************************************************/
+void clearDelPar()
+{
+ 	startline_F=0;//发现起始行标志清0
+ 	//endline_F=0;//发现结束行标志清0
+	//PickCenter_flag=0;//清零图像开始寻黑线标志
+	lost_already=0;
+	Lost_Line_count=0;
+	Lost_left_count=0;
+	Lost_right_count=0;
+	Pick_line=0;
+	Shi_zi_line=0;
+	Bline_diff=0;
+	maxBline_diff=0;
+	Shi_zi_flag=0;
+	lost_w_count=0;
+	lost_b_count=0;
+	near_xielv_left=0;
+	near_xielv_right=0;
+}
+

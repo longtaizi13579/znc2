@@ -1,0 +1,1277 @@
+extern struct Bline Bline_lefts[PIC_H]; 
+extern struct Bline Bline_rights[PIC_H];
+extern uint8 PickCenter_flag;
+//extern unsigned char const adjust_table[];//梯形失真调整参数数组
+extern uint8 big_right;
+extern uint8 Cmp;
+extern uint8 buzzer_num;
+extern uint8 buzzer_flag;
+extern uint8 init_7620_flag;
+extern uint8 roadFlag;
+extern uint8 temp_shizi;
+extern uint8 Shi_zi_num;
+extern uint16  const duoji_table[];
+extern uint8 liangdu;
+extern uint8 baoguang;
+extern uint8 par_num;
+extern uint8 row_F[H];//该行采集完成标志
+extern uint8 ctl_num;//控制标志 0为新控制，1为老控制
+extern char startline_F;//发现起始行
+extern char endline_F;//发现结束行  
+extern uint8 set_flag;//设置标志位
+//extern ParValue myPar_num;
+uint16 last_left_line=(V/2);
+uint16 last_right_line=(V/2);
+/*******************************************************************************
+函数名称：binaryzation
+函数功能: 二值化图像数据
+参数：
+*******************************************************************************/
+void Binaryzation()
+{
+  uint16 line,pixel;
+  for(line=0;line<H;line++)
+  {
+    for(pixel=V/2;pixel<V;pixel++)
+    {
+      if(video[line][pixel]<Cmp)//Cmp为摄像头二值化阈值
+      {
+        video[line][pixel]=0;
+      }
+      else
+        video[line][pixel]=1;
+    }
+      for(pixel=V/2-1;pixel>0;pixel--)
+    {
+      if(video[line][pixel]<Cmp)
+      {
+        video[line][pixel]=0;
+      }
+      else
+        video[line][pixel]=1;
+        
+      }
+    }
+}
+/*******************************************************************************
+函数名称：binaryzation_line
+函数功能: 二值化图像数据
+参数：
+*******************************************************************************/
+void Binary_line(uint8 line)
+{
+  uint16 pixel;
+  uint32 gray_value=0;
+  uint32 count=0;
+  uint8 Deal_CMP=145;
+  for(pixel=0;pixel<V;pixel++)
+  {
+	if((video[line][pixel]<235)&&(video[line][pixel]>30))
+	{
+	  	count++;
+		gray_value+=video[line][pixel];
+	}
+  }
+  Deal_CMP=gray_value/count;
+  for(pixel=0;pixel<V;pixel++)
+  {
+     if(video[line][pixel]<Deal_CMP)//Cmp为摄像头二值化阈值
+     {
+        video_deal[line][pixel]=0;
+     }
+     else
+        video_deal[line][pixel]=1;
+  }
+}
+/*******************************************************************************
+函数名称：getWholeArea
+函数功能: 获得有效行内的整体面积
+参数：
+*******************************************************************************/
+uint32 getWholeArea()
+{
+  	uint16 line;
+  	uint32 area=0;
+  	for(line=0;line<valid_line;line++)
+  	{
+	  //if((Deal_flag[line]&INVALID_LINE)==0)
+	  {
+		area+=(Bline_left[line]-Bline_right[line]);
+	  }
+    }
+	return area;
+}
+/*******************************************************************************
+函数名称：regression（回归）
+函数功能: 最小二乘法求斜率
+参数：
+*******************************************************************************/
+int regression(uint16 Pick_table[],int startline,int endline)//计算斜率函数
+{
+    int num=0,i;
+    int sumX=0,sumY=0,avrX=0,avrY=0;
+    int B_up1=0,B_up2=0;
+	int B_up=0,B_down=0;
+	int slope=0;
+    for(i=startline;i<=endline;i++)
+    {
+         if(Pick_table[i]) 
+         {
+            num++;
+            sumX+=i;
+            sumY+=Pick_table[i];
+         }
+    }
+    avrX=sumX/num;
+    avrY=sumY/num;
+    for(i=startline;i<=endline;i++)
+    {
+	         if(Pick_table[i]) 
+	         { 
+	            B_up1=(int)Pick_table[i]-(int)avrY;
+	            B_up2=i-avrX;
+	            B_up+=(int)B_up1*(int)B_up2;
+	            //B_up=B_up/100*100;
+	            B_down+=(int)(i-avrX)*(int)(i-avrX);
+	         }
+   }
+   if(B_down==0) slope=0;
+   else slope=B_up*10/B_down;
+   return slope;
+}
+/*******************************************************************************
+函数名称：getWholeArea
+函数功能: 获得有效行内的整体面积
+参数：
+*******************************************************************************/
+uint32 getTxArea()
+{
+  	uint32 area=0;
+	uint32 area1=0;
+	uint32 area2=0;
+	area1=(uint32)get_area(Bline_left[0],Bline_right[0],Bline_left[valid_line],0,0,valid_line);
+	area2=(uint32)get_area(Bline_right[0],Bline_left[valid_line],Bline_right[valid_line],0,valid_line,valid_line);
+	area=area1+area2;
+	return area;
+}
+/*******************************************************************************
+函数名称：get_area
+函数功能: 计算曲率
+参数：
+*******************************************************************************/
+float get_area_dsp(uint16 x1,uint16 x2,uint16 x3,uint16 y1,uint16 y2,uint16 y3)//A(x1,y1),B(x2,y2),C(x3,y3)
+{
+  float temp1,temp2,temp3,temp4,temp5,temp6,temp7,temp8,div=0.5;
+  temp1=x2-x1;
+  temp2=y3-y1;
+  temp4=x3-x1;
+  temp5=y2-y1;
+  arm_mult_f32(&temp1, &temp2, &temp3, 1);
+  arm_mult_f32(&temp4, &temp5, &temp6, 1);
+  temp7=temp3-temp6;  
+  arm_mult_f32(&temp7, &div, &temp8, 1); 
+  return temp8;
+}
+/*******************************************************************************
+函数名称：get_curvature
+函数功能: 计算曲率
+参数：
+*******************************************************************************/
+float get_curvature(uint16 x1,uint16 x2,uint16 x3,uint16 y1,uint16 y2,uint16 y3)//A(x1,y1),B(x2,y2),C(x3,y3)
+{
+  float temp1,temp2,temp3,temp4,ab,bc,ac,area,num=0,qulv;
+  area=get_area(x1,x2,x3,y1,y2,y3);
+  temp1=x2-x1;
+  temp2=y2-y1;
+  arm_mult_f32(&temp1, &temp1, &temp3, 1);
+  arm_mult_f32(&temp2, &temp2, &temp4, 1);
+  temp4=temp4+temp3;
+  arm_sqrt_f32(temp4,&ab);
+  
+  temp1=x3-x2;
+  temp2=y3-y2;
+  arm_mult_f32(&temp1, &temp1, &temp3, 1);
+  arm_mult_f32(&temp2, &temp2, &temp4, 1);
+  temp4=temp4+temp3;
+  arm_sqrt_f32(temp4,&ac);
+  temp1=x3-x1;
+  temp2=y3-y1;
+  
+  arm_mult_f32(&temp1, &temp1, &temp3, 1);
+  arm_mult_f32(&temp2, &temp2, &temp4, 1);
+  temp4=temp4+temp3;
+  arm_sqrt_f32(temp4,&bc);
+  
+  arm_mult_f32(&ab, &bc, &num, 1);
+  arm_mult_f32(&ac, &num, &num, 1);
+  qulv=area/num;
+  return qulv;
+}
+/*******************************************************************************
+函数名称：get_area
+函数功能: 计算曲率 
+参数：
+*******************************************************************************/
+float get_area(uint32 x1,uint32 x2,uint32 x3,uint32 y1,uint32 y2,uint32 y3)//A(x1,y1),B(x2,y2),C(x3,y3)
+{
+  int temp1,temp2,temp3,temp4,temp5,temp6,temp7,temp8;
+  temp1=x2-x1;
+  temp2=y3-y1;
+  temp4=x3-x1;
+  temp5=y2-y1;
+  temp3=temp1*temp2;
+  temp6=temp4*temp5;
+  temp7=temp3-temp6;  
+  temp8=temp7/2; 
+  return temp8;
+}
+
+
+/*******************************************************************************
+函数名称：PickCenter_near
+函数功能: 寻找近处中心线函数
+参数：
+*******************************************************************************/
+int32 checkShizi(uint8 line)
+{
+  int32 diff;
+  diff=0;
+  /*int32 pixel,flag=0;//,temp1,temp2;
+  uint32 Black_count_left=0,Black_count_right=0;
+  uint16 pick_line=0,temp_line;
+  uint16 temp_lost_line=0;
+  int32 start_pixel;
+  //uint16 left_lost_flag=0,right_lost_flag=0;
+  //const int Cmp_D=25;
+  //const int  MAX=240;
+  uint32 i;
+  //for(pick_line=0;pick_line<5;pick_line++)
+	  {
+			for(pixel=start_pixel;pixel<V;pixel+=2)
+			{
+				if(video[pick_line][pixel]<Cmp)
+				{
+					  flag=0;
+					  if(pixel<(V-4))
+					  {
+						  for(i=1;i<5;i++)
+						  {
+								if(video[pick_line][pixel+i]<Cmp)
+									flag++;
+						  }
+						  if(flag>3)
+						  {
+								Bline_left[pick_line]=pixel;
+								break;
+						  }
+					  }
+					  else
+					  {
+							i=pixel;
+							while(i<(V-1))
+							{
+								if(video[pick_line][i+1]<Cmp)
+									flag++;
+								i++;
+							 }
+							if(flag>0)
+							{
+							 	Bline_left[pick_line]=pixel;
+								break;
+							}
+					  }
+				 }
+			}
+			if(pixel>=V)
+			{
+			  Bline_left[pick_line]=V-1;
+			  Pick_flag[pick_line] |= LEFT_LOST_W;
+			}
+			for(pixel=start_pixel;pixel>0;pixel-=2)
+			{
+				if(video[pick_line][pixel]<Cmp)
+				{
+					  flag=0;
+					  if(pixel>3)
+					  {
+						  for(i=1;i<5;i++)
+						  {
+								if(video[pick_line][pixel-i]<Cmp)
+									flag++;
+						  }
+						  if(flag>3)
+						  {
+								 Bline_right[pick_line]=pixel;
+								 break;
+						  }
+					  }
+					  else
+					  {
+							i=pixel;
+							while(i>0)
+							{
+								if(video[pick_line][i-1]<Cmp)
+									flag++;
+								i--;
+							 }
+							if(flag>0)
+							{
+								 Bline_right[pick_line]=pixel;
+								 break;
+							}
+					  }
+				}
+			}
+			if(pixel<=0)
+			{
+			  Bline_right[pick_line]=0;
+			  Pick_flag[pick_line] |= RIGHT_LOST_W;
+			}
+			{
+			 	diff=abs_sub(Bline_left[pick_line],Bline_right[pick_line]);
+			}
+	  }
+  */
+	  return diff;
+}
+/*******************************************************************************
+函数名称：PickCenter_near
+函数功能: 寻找近处中心线函数
+参数：
+*******************************************************************************/
+int32 PickCenter_near()
+{
+  int32 pixel,flag=0;//,temp1,temp2;
+  uint32 Black_count_left=0,Black_count_right=0;
+  uint16 pick_line=0,temp_line;
+  uint16 temp_lost_line=0;
+  int32 start_pixel;
+  //uint16 left_lost_flag=0,right_lost_flag=0;
+  //const int Cmp_D=25;
+  //const int  MAX=240;
+  uint32 i;
+  for(temp_line=0;temp_line<5;temp_line++)//统计前5行中间列左右50列黑点数目 
+  {																			  //后期可以尝试边沿法
+		for(pixel=V/2-45;pixel<(V/2);pixel++)
+		{
+			if(video[temp_line][pixel]<Cmp)
+			{
+				Black_count_right++;
+			}
+		}
+		for(pixel=V/2;pixel<(V/2+45);pixel++)
+		{
+			if(video[temp_line][pixel]<Cmp)
+			{
+				Black_count_left++;
+			}
+		}
+  }
+  if(Black_count_right>Black_count_left)//中间右边黑点数目大于左边 赛道偏左
+  {
+		start_pixel=V/2+45;
+  }
+  else if(Black_count_right<Black_count_left)//中间左边黑点数目大于右边 赛道偏右
+  {
+		start_pixel=V/2-45;
+  }
+  else
+  {
+		start_pixel=V/2;
+  }
+  for(pick_line=0;pick_line<5;pick_line++)
+	  {
+			for(pixel=start_pixel;pixel<V;pixel+=2)
+			{
+				if(video[pick_line][pixel]<Cmp)
+				{
+					  flag=0;
+					  if(pixel<(V-4))
+					  {
+						  for(i=1;i<5;i++)
+						  {
+								if(video[pick_line][pixel+i]<Cmp)
+									flag++;
+						  }
+						  if(flag>3)
+						  {
+								Bline_left[pick_line]=pixel;
+								break;
+						  }
+					  }
+					  else
+					  {
+							i=pixel;
+							while(i<(V-1))
+							{
+								if(video[pick_line][i+1]<Cmp)
+									flag++;
+								i++;
+							 }
+							if(flag>0)
+							{
+							 	Bline_left[pick_line]=pixel;
+								break;
+							}
+					  }
+				 }
+			}
+			if(pixel>=V)
+			{
+			  Bline_left[pick_line]=V-1;
+			  Pick_flag[pick_line]|=LEFT_LOST_W;
+			}
+			for(pixel=start_pixel;pixel>0;pixel-=2)
+			{
+				if(video[pick_line][pixel]<Cmp)
+				{
+					  flag=0;
+					  if(pixel>3)
+					  {
+						  for(i=1;i<5;i++)
+						  {
+								if(video[pick_line][pixel-i]<Cmp)
+									flag++;
+						  }
+						  if(flag>3)
+						  {
+								 Bline_right[pick_line]=pixel;
+								 break;
+						  }
+					  }
+					  else
+					  {
+							i=pixel;
+							while(i>0)
+							{
+								if(video[pick_line][i-1]<Cmp)
+									flag++;
+								i--;
+							 }
+							if(flag>0)
+							{
+								 Bline_right[pick_line]=pixel;
+								 break;
+							}
+					  }
+				}
+			}
+			if(pixel<=0)
+			{
+			  Bline_right[pick_line]=0;
+			  Pick_flag[pick_line]|=RIGHT_LOST_W;
+			}
+			if(Bline_left[pick_line]==(V-1)&&Bline_right[pick_line]==0)//左右边界都未找到
+			{
+				temp_lost_line++;
+				Pick_flag[pick_line]|=ALL_LOST_W;
+			}
+			else if(Bline_left[pick_line]<(V-100)&&Bline_right[pick_line]>100)
+			{
+			    if(last_zhidao_flag==1)
+					if((Bline_left[pick_line]-Bline_right[pick_line])<100)
+					{
+					  //start_end_flag=1;
+					}
+			}
+			//else
+			{
+			  Bline_diff=abs_sub(Bline_left[pick_line],Bline_right[pick_line]);
+			}
+	  }
+ 
+  //为跟线搜索算法参数赋初值
+  last_left_line=Bline_left[4];
+  last_right_line=Bline_right[4];
+  if(temp_lost_line>0)
+	return temp_lost_line;
+  else
+  	return 0;
+}
+
+/*******************************************************************************
+函数名称：PickCenter_near
+函数功能: 从中心寻线法
+参数：
+*******************************************************************************/
+int32 PickCenter_m(int32 start_pixel,uint16 pick_line)
+{
+	int32 pixel,flag=0;//,temp1,temp2;
+  	//uint32 Black_count_left=0,Black_count_right=0;
+  	//uint16 pick_line=0,temp_line;
+  	uint16 temp_lost_line=0;
+  	//int32 start_pixel;
+	//uint16 left_lost_flag=0,right_lost_flag=0;
+	//const int Cmp_D=25;
+	//const int  MAX=240;
+  	uint32 i;
+  	//pick_line=line;
+	///////////////////////////////////////////////////////////////////////////
+  	{
+	  ///////////////////////////////左边线///////////////////////////////////
+		for(pixel=start_pixel;pixel<V;pixel+=2)
+		{
+			if(video[pick_line][pixel]<Cmp)
+			{
+				flag=0;
+				if(pixel<(V-4))
+				{
+					for(i=1;i<5;i++)
+					{
+						if(video[pick_line][pixel+i]<Cmp)
+							flag++;
+					 }
+					if(flag>3)
+					{
+						Bline_left[pick_line]=pixel;
+						break;
+					}
+				}
+				else
+				{
+					i=pixel;
+					while(i<(V-1))
+					{
+						if(video[pick_line][i+1]<Cmp)
+							flag++;
+						i++;
+					}
+					if(flag>1)
+					{
+						Bline_left[pick_line]=pixel;
+						break;
+					}
+				}
+			}
+		}
+		if(pixel>=V)
+		{
+		  Bline_left[pick_line]=V-1;
+		}
+		else//找到黑线 后期要改为判断左右黑线关系后再做赋值
+		{
+		  last_right_line = Bline_left[pick_line];
+		}
+		/////////////////////右边线///////////////////
+		for(pixel=start_pixel;pixel>0;pixel-=2)
+		{
+			if(video[pick_line][pixel]<Cmp)
+			{
+				flag=0;
+				if(pixel>3)
+				{
+					for(i=1;i<5;i++)
+					{
+						if(video[pick_line][pixel-i]<Cmp)
+							flag++;
+					}
+					if(flag>3)
+					{
+						Bline_right[pick_line]=pixel;
+						break;
+					}
+				}
+				else
+				{
+					i=pixel;
+					while(i>0)
+					{
+						if(video[pick_line][i-1]<Cmp)
+							flag++;
+						i--;
+					}
+					if(flag>1)
+					{
+					    Bline_right[pick_line]=pixel;
+						break;
+					}
+				 }
+			}
+		}
+		if(pixel<=0)
+		{
+		  Bline_right[pick_line]=0;
+		}
+		else
+		{
+		  last_left_line=Bline_right[pick_line];
+		}
+		if(Bline_left[pick_line]==(V-1)&&Bline_right[pick_line]==0)//左右边界都未找到
+		{
+			temp_lost_line++;
+		}
+	}
+ 
+	  //为跟线搜索算法参数赋初值
+	if(temp_lost_line==0)
+	{
+		return 0;
+	}
+	else
+		return 1;
+}
+/*******************************************************************************
+函数名称：PickCenter_diff
+函数功能: 跟踪寻线
+参数：line 寻找行
+*******************************************************************************/
+void PickCenter_diff(uint16 line)
+{
+  uint16 pixel;
+  uint16 left_start;//
+  uint16 right_start;//
+  uint16 left_end;//左边线寻线结束边界
+  uint16 right_end;//右边线寻线结束边界
+  uint16 i;
+  uint8 flag=0;//黑线判断标志
+  volatile uint16 left_lost_flag=0,right_lost_flag=0;
+  //const int Cmp_D=25;
+  //const int  MAX=240;
+  //////////////////////////////寻线算法/////////////////////////////////////
+  {
+	    if(last_left_line>IMG_DIFF)
+	    	left_start=last_left_line-IMG_DIFF;
+		else
+		    left_start=1;
+	    if(Bline_left[line-1]<(V-IMG_DIFF))
+	    	left_end=last_left_line+IMG_DIFF;//取上一行黑线偏右IMG_DIFF列坐标
+		else
+		  	left_end=V-1;
+		if((video[line][left_start]<Cmp)&&(video[line][left_start+1]<Cmp))
+		{
+		  	pixel=left_start;
+		}
+		else
+		{
+		  	for(pixel=left_start;pixel<left_end;pixel++)
+			{
+				if(video[line][pixel-1]>Cmp&&video[line][pixel]<Cmp)
+				{
+				   flag=0;
+				   for(i=0;i<3;i++)
+				   {
+					 if(video[line][pixel+i]<Cmp)
+					   flag++;
+				   }
+					if(flag>1)
+					{
+						Bline_left[line]=pixel;
+						last_left_line=pixel;
+						break;
+					}
+				}
+			}
+		}
+		if(pixel==left_start)
+		{
+		  	Pick_flag[line] |= LEFT_LOST_B;
+		  	//Bline_left[line]=last_left_line;
+			//if(abs_sub(Bline_left[line-1],Bline_left[line-2])>5)
+				Bline_left[line]=left_start;
+			//else
+			    //Bline_left[line]=Bline_left[line-1];
+		 	last_left_line=Bline_left[line];
+		  	left_lost_flag=1;
+		  	Lost_left_count++;
+		}  
+		else if(pixel==left_end)//未找到黑线
+		{
+		  	Pick_flag[line] |= LEFT_LOST_W;
+			Bline_left[line]=last_left_line;
+			left_lost_flag=1;
+			Lost_left_count++;
+		}
+/////////////////////////////////////////////////////////////////////////////////
+		if(last_right_line>IMG_DIFF)
+			right_end=last_right_line-IMG_DIFF;
+		else
+		    right_end=1;
+		right_start=last_right_line+IMG_DIFF;
+		if(right_start>(V-1))
+		{
+			 right_start=V-1;
+		}//注意是否可去掉
+		if((video[line][right_start]<Cmp)&&(video[line][right_start-1]<Cmp))
+		{
+			pixel=right_start;
+		} 
+		else
+		{
+		  	for(pixel=right_start;pixel>right_end;pixel--)
+	  		{
+				if(video[line][pixel]<Cmp)
+				{
+				   flag=0;
+				   for(i=0;i<3;i++)
+				   {
+					 if(video[line][pixel-i]<Cmp)
+					   flag++;
+				   }
+					if(flag>1)
+					{
+						Bline_right[line]=pixel;
+						last_right_line=pixel;
+						break;
+					}
+				}
+	  		}
+		}
+		if(pixel==right_start)
+		{
+		  	Pick_flag[line] |= RIGHT_LOST_B;
+			//Bline_right[line]=last_right_line;
+			//if(abs_sub(Bline_right[line-1],Bline_right[line-2])>5)
+				Bline_right[line]=right_start;
+			//else
+			   // Bline_right[line]=Bline_right[line-1];
+			last_right_line=Bline_right[line];
+			right_lost_flag=1;
+			Lost_right_count++;
+		}
+		else if(pixel==right_end)//未找到右边黑线
+		{
+		  	Pick_flag[line] |= RIGHT_LOST_W;
+			Bline_right[line]=last_right_line;
+			right_lost_flag=1;
+			Lost_right_count++;
+		}
+  }
+  if(line<35)
+  {
+	 if(last_zhidao_flag==1)
+	 if(run_time>25)
+	 {
+		test_start_line(line);
+	 }
+  }
+  if((right_lost_flag==1)&&(left_lost_flag==1))
+  {
+	Lost_Line_count++;
+	if((Pick_flag[line]&LEFT_LOST_W)&&(Pick_flag[line]&RIGHT_LOST_W))
+		Pick_flag[line] |= ALL_LOST_W;
+  }
+  //else
+  {
+	Bline_diff=abs_sub(Bline_left[line],Bline_right[line]);
+  }
+}
+/*******************************************************************************
+函数名称：PickCenter_up
+函数功能: 寻找中心线函数升级
+参数：line 寻找行
+*******************************************************************************/
+void PickCenter_up(uint16 line)
+{
+  uint16 pixel,flag=0,temp1,temp2;
+  uint8 i;
+  uint8 right_lost_flag=0,left_lost_flag=0;
+  if(PickCenter_flag<5)
+  {
+		for(pixel=V/2;pixel<V;pixel++)
+		{
+			if(video[line][pixel]<Cmp)
+			{
+			      flag=0;
+				  for(i=1;i<5;i++)
+				  {
+					if(video[line][pixel+i]<Cmp)
+					  flag++;
+				  }
+				  if(flag>3)
+				  {
+					Bline_left[line]=pixel;
+					break;
+				  }
+			 }
+		}
+		if(pixel==V)
+			Bline_left[line]=V-1;
+		for(pixel=V/2;pixel>0;pixel--)
+	  	{
+			if(video[line][pixel]<Cmp)
+			{
+			      flag=0;
+			  	  if(pixel>4)
+				  {
+					for(i=1;i<5;i++)
+				  	{
+						if(video[line][pixel-i]<Cmp)
+					  		flag++;
+				  	}
+				  }
+				  if(flag>3)
+				  {
+					 Bline_right[line]=pixel;
+					 break;
+				  }
+			}
+	  	}
+	  	if(pixel==0)
+		 Bline_right[line]=0;
+  }
+  else if(PickCenter_flag<50)//此处有修改看是否会使提取过程出错
+  {
+	    if(Bline_left[line-1]<270)
+	    	temp1=Bline_left[line-1]+5;//取上一行黑线偏右IMG_DIFF列坐标
+		else
+		  	temp1=(V-1);
+		for(pixel=Bline_left[line-1]-5;pixel<temp1;pixel++)
+		{
+			if(video[line][pixel]<Cmp)
+			{
+			      flag=0;
+				  for(i=1;i<5;i++)
+				  {
+					if(video[line][pixel+i]<Cmp)
+					  flag++;
+				  }
+				  if(flag>2)
+				  {
+					Bline_left[line]=pixel;
+					break;
+				  }
+			 }
+		}
+		if(pixel==temp1)
+		{
+			Bline_left[line]=Bline_left[line-1];
+			left_lost_flag=1;
+		}
+		if(Bline_right[line-1]>IMG_DIFF)
+			temp2=Bline_right[line-1]-5;
+		else
+		    temp2=0;
+		for(pixel=Bline_right[line-1]+5;pixel>temp2;pixel--)
+	  	{
+		  	if(pixel>278)
+			{
+			  pixel=(V-1);
+			}//注意是否可去掉
+			if(video[line][pixel]<Cmp)
+			{
+			      flag=0;
+			   	  if(pixel>4)
+				  {
+					  for(i=1;i<5;i++)
+					  {
+						if(video[line][pixel-i]<Cmp)
+						  flag++;
+					  }
+				  }
+				  if(flag>2)
+				  {
+					Bline_right[line]=pixel;
+					break;
+				  }
+			}
+			
+	  	}
+	  if(pixel==temp2)
+	  {
+		Bline_right[line]=Bline_right[line-1];
+		right_lost_flag=1;
+	  }
+  }
+  else //此处有修改看是否会使提取过程出错
+  {
+	    if(Bline_left[line-1]<270)
+	    	temp1=Bline_left[line-1]+5;//取上一行黑线偏右IMG_DIFF列坐标
+		else
+		  	temp1=(V-1);
+		for(pixel=Bline_left[line-1]-5;pixel<temp1;pixel++)
+		{
+			if(video[line][pixel]<Cmp)
+			{
+			      flag=0;
+				  for(i=1;i<5;i++)
+				  {
+					if(video[line][pixel+i]<Cmp)
+					  flag++;
+				  }
+				  if(flag>2)
+				  {
+					Bline_left[line]=pixel;
+					break;
+				  }
+			 }
+		}
+		if(pixel==temp1)
+		{
+		  Bline_left[line]=Bline_left[line-1];
+		  left_lost_flag=1;
+		}
+		if(Bline_right[line-1]>IMG_DIFF)
+			temp2=Bline_right[line-1]-5;
+		else
+		    temp2=0;
+		for(pixel=Bline_right[line-1]+5;pixel>temp2;pixel--)
+	  	{
+		  	if(pixel>278)
+			{
+			  pixel=(V-1);
+			}
+			if(video[line][pixel]<Cmp)
+			{
+			      flag=0;
+			       if(pixel>4)
+				  {
+					  for(i=1;i<5;i++)
+					  {
+						if(video[line][pixel-i]<Cmp)
+						  flag++;
+					  }
+				  }
+				  if(flag>2)
+				  {
+					Bline_right[line]=pixel;
+					break;
+				  }
+			}
+			
+	  	}
+	  if(pixel==temp2)
+	  {
+		Bline_right[line]=Bline_right[line-1];
+		right_lost_flag=1;
+	  }
+  }
+  if((right_lost_flag==1)&&(left_lost_flag==1))
+  {
+	Lost_Line_count++;
+  }
+  PickCenter_flag++;
+}
+/*******************************************************************************
+函数名称：PickCenter_up
+函数功能: 寻找中心线函数升级
+参数：line 寻找行
+*******************************************************************************/
+void PickCenter_new()
+{
+  uint16 pixel,flag=0,temp1,temp2;
+  uint16 line=0;
+  PickCenter_flag=0;
+  uint8 i;
+  for(line=0;line<H;line++)
+  {
+		if(line<5)
+	  {
+			for(pixel=V/2;pixel<V;pixel++)
+			{
+				if(video[line][pixel]<Cmp)
+				{
+					  flag=0;
+					  for(i=1;i<5;i++)
+					  {
+						if(video[line][pixel+i]<Cmp)
+						  flag++;
+					  }
+					  if(flag>3)
+					  {
+						Bline_lefts[line].coord=pixel;
+						Bline_lefts[line].line=line;
+						break;
+					  }
+				 }
+			}
+			if(pixel==V)
+			{
+			  Bline_lefts[line].coord=V-1;
+			  Bline_lefts[line].line=line;
+			}
+			for(pixel=V/2;pixel>0;pixel--)
+			{
+				if(video[line][pixel]<Cmp)
+				{
+					  flag=0;
+					  if(pixel>4)
+					  {
+						for(i=1;i<5;i++)
+						{
+							if(video[line][pixel-i]<Cmp)
+								flag++;
+						}
+					  }
+					  if(flag>3)
+					  {
+						 Bline_rights[line].coord=pixel;
+						 Bline_rights[line].line=line;
+						 break;
+					  }
+				}
+			}
+			if(pixel==0)
+			{
+			  Bline_rights[line].coord=0;
+			  Bline_rights[line].line=line;
+			}
+	  }
+	  else if(PickCenter_flag<30)//此处有修改看是否会使提取过程出错
+	  {
+			if(Bline_left[line-1]<(V+IMG_DIFF))
+				temp1=Bline_left[line-1]+IMG_DIFF;//取上一行黑线偏右IMG_DIFF列坐标
+			else
+				temp1=V;
+			for(pixel=Bline_left[line-1]-IMG_DIFF;pixel<temp1;pixel++)
+			{
+				if(video[line][pixel]<Cmp)
+				{
+					  flag=0;
+					  for(i=1;i<5;i++)
+					  {
+						if(video[line][pixel+i]<Cmp)
+						  flag++;
+					  }
+					  if(flag>2)
+					  {
+						Bline_left[line]=pixel;
+						break;
+					  }
+				 }
+			}
+			if(pixel==temp1)
+			{
+				Bline_left[line]=Bline_left[line-1];
+			}
+			if(Bline_right[line-1]>IMG_DIFF)
+				temp2=Bline_right[line-1]-IMG_DIFF;
+			else
+				temp2=0;
+			for(pixel=Bline_right[line-1]+IMG_DIFF;pixel>temp2;pixel--)
+			{
+				if(pixel>(V-1))
+				{
+				  pixel=V;
+				}//注意是否可去掉
+				if(video[line][pixel]<Cmp)
+				{
+					  flag=0;
+					  if(pixel>4)
+					  {
+						  for(i=1;i<5;i++)
+						  {
+							if(video[line][pixel-i]<Cmp)
+							  flag++;
+						  }
+					  }
+					  if(flag>2)
+					  {
+						Bline_right[line]=pixel;
+						break;
+					  }
+				}
+				
+			}
+		  if(pixel==temp2)
+			 Bline_right[line]=Bline_right[line-1];
+	  }
+	  else //此处有修改看是否会使提取过程出错
+	  {
+			if(Bline_left[line-1]<270)
+				temp1=Bline_left[line-1]+IMG_DIFF;//取上一行黑线偏右IMG_DIFF列坐标
+			else
+				temp1=(V-1);
+			for(pixel=Bline_left[line-1]-IMG_DIFF;pixel<temp1;pixel++)
+			{
+				if(video[line][pixel]<Cmp)
+				{
+					  flag=0;
+					  for(i=1;i<5;i++)
+					  {
+						if(video[line][pixel+i]<Cmp)
+						  flag++;
+					  }
+					  if(flag>2)
+					  {
+						Bline_left[line]=pixel;
+						break;
+					  }
+				 }
+			}
+			if(pixel==temp1)
+			Bline_left[line]=Bline_left[line-1];
+			if(Bline_right[line-1]>IMG_DIFF)
+				temp2=Bline_right[line-1]-IMG_DIFF;
+			else
+				temp2=0;
+			for(pixel=Bline_right[line-1]+IMG_DIFF;pixel>temp2;pixel--)
+			{
+				if(pixel>278)
+				{
+				  pixel=(V-1);
+				}
+				if(video[line][pixel]<Cmp)
+				{
+					  flag=0;
+					   if(pixel>4)
+					  {
+						  for(i=1;i<5;i++)
+						  {
+							if(video[line][pixel-i]<Cmp)
+							  flag++;
+						  }
+					  }
+					  if(flag>2)
+					  {
+						Bline_right[line]=pixel;
+						break;
+					  }
+				}
+				
+			}
+		  if(pixel==temp2)
+			 Bline_right[line]=Bline_right[line-1];
+	  }
+	  PickCenter_flag++;
+  }
+}
+/*******************************************************************************
+函数名称：test_center
+函数功能: 找到中心线矫正摄像头用
+参数：
+*******************************************************************************/
+void test_center()
+{
+  uint8 line,center=0,put[3]={0};
+  for(line=0;line<H;line++)
+  {
+	if(abs_sub(Pick_table[line],(V/2))<2)
+	     center++;
+  }
+	LCD_Print(8,6,"center:");
+    if(run_time%5==0)
+ 		char_change_1(center,put);
+	delay2();
+	LCD_Print(72,6,put);
+}
+
+/*******************************************************************************
+函数名称：find_shizi()
+函数功能: 寻找十字道
+参数：line 出现十字道特征行 
+*******************************************************************************/
+int32 find_shizi(uint8 line)
+{
+  uint16 temp_line,left_line=0,right_line=0;
+  //int32 guai_dian=0;
+  //int temp_left_flag=0,temp_right_flag=0;
+  //int diff_left=0,diff_right=0;
+  int diff_max=0;
+  int left_min=(V-1),right_max=0;
+  for(temp_line=1;temp_line<line;temp_line++)
+  {
+	if(Bline_left[temp_line]<left_min)
+	{
+	  left_min=Bline_left[temp_line];
+	  left_line=temp_line;
+	}
+	if(Bline_right[temp_line]>right_max)
+	{
+	  right_max=Bline_right[temp_line];
+	  right_line=temp_line;
+	}
+  }
+  if(right_max>((V-1)-left_min))
+  {
+	if(Bline_right[right_line]>=Bline_right[right_line-1]&&((Bline_right[right_line]-Bline_right[right_line+2])>10))
+	  diff_max=right_line;
+  }
+  else
+  {
+	if(Bline_left[left_line]<=Bline_left[left_line-1]&&((Bline_left[left_line]-Bline_left[left_line+2])<-10))
+	  diff_max=left_line;
+  }
+  return diff_max;
+}
+
+/*******************************************************************************
+函数名称：ti_jiaozheng_new
+函数功能: 矫正图像的梯形失真新方法
+参数：
+*******************************************************************************/
+void ti_jiaozheng_new()
+{
+  uint16 line;
+  int temp_left,temp_right;
+  
+  for(line=0;line<H;line++)
+  {
+	if(Bline_right[line]<((V-1)-Bline_left[line]))
+	  {
+		temp_left=(5000*Bline_left[line]-730439)/(10000-45*(2*line+8))+130; //near
+    	if(temp_left<0)
+    	  Bline_left[line]=0;
+    	else if(temp_left>(V-1))
+    	  Bline_left[line]=(V-1);
+		else
+		  Bline_left[line]=temp_left;
+		
+		Pick_table[line]=Bline_left[line]-70;
+		if(Bline_left[line]>V/2)
+		{
+		  Bline_right[line]=Bline_left[line]-V/2;
+		}
+		else 
+		  Bline_right[line]=0;
+	  }
+	  else
+	  {
+		temp_right=(5000*Bline_right[line]-730439)/(10000-45*(2*line+8))+130; //near
+    	if(temp_right<0)
+    	  Bline_right[line]=0;
+    	else if(temp_right>(V-1))
+    	  Bline_right[line]=V-1;
+		else
+		  Bline_right[line]=temp_right;
+		Pick_table[line]=Bline_right[line]+70;
+		Bline_left[line]=(Bline_right[line]+V/2)%280;
+	  }
+	if(Bline_left[line]<10||Bline_right[line]>250)
+	{
+	  //valid_line=line;
+	  break;
+	}
+  }
+	  
+}
+/*******************************************************************************
+函数名称：ti_jiaozheng
+函数功能: 矫正图像的梯形失真
+参数：
+*******************************************************************************/
+void ti_jiaozheng()
+{
+  uint16 line;
+  int temp_left,temp_right;
+  
+  for(line=0;line<H;line++)//保存原始的左右边线提取结果
+  {
+	PrBline_left[line] = Bline_left[line];
+	PrBline_right[line] = Bline_right[line];
+  }
+  
+  for(line=0;line<H;line++)
+  {
+	   //////////////////////////////////左边线矫正////////////////////////////////
+	    if(Bline_left[line]==(V-1))
+		  Deal_flag[line] |= DEAL_LEFT_LOST;
+    	temp_left=(5000*Bline_left[line]-520439)/(10000-60*(2*line+1))+100; //near
+    	if(temp_left<0)
+    	  Bline_left[line]=0;
+    	else if(temp_left>(V-1))
+    	  Bline_left[line]=(V-1);
+		else
+		  Bline_left[line]=temp_left;
+		//////////////////////////////////右边线矫正////////////////////////////////
+		if(Bline_right[line]==0)
+		  Deal_flag[line] |= DEAL_RIGHT_LOST;
+    	temp_right=(5000*Bline_right[line]-520439)/(10000-60*(2*line+1))+100; //near
+    	if(temp_right<0)
+    	  Bline_right[line]=0;
+    	else if(temp_right>(V-1))
+    	  Bline_right[line]=(V-1);
+		else
+		  Bline_right[line]=temp_right;
+  }
+  
+}

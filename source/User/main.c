@@ -21,7 +21,8 @@ void main()
   DisableInterrupts;  
   uint8_t res;
   uart_init(test_port, 115200);
-  Test_MPU6050();                //测试龙邱六轴MPU6050，OLED刷新数据
+  uart_printf(test_port, "GPIO 测试\n");
+  //Test_MPU6050();                //测试龙邱六轴MPU6050，OLED刷新数据
   EnableInterrupts;
   while(1)
   {
@@ -37,14 +38,14 @@ void main()
   uart_printf(test_port, "GPIO 测试\n");
  
   //GPO
-  gpio_init (PTD7, GPO, HIGH);         //初始化并点亮二极管
-  gpio_init (PTC15, GPO, LOW);
+  gpio_init (PTC1, GPO, HIGH);         //初始化并点亮二极管
+  //gpio_init (PTC15, GPO, LOW);
   //GPI
-  gpio_init (PTA4, GPI, LOW);      //电平读取， 初始化LOW, HIGH没有意义
+  //gpio_init (PTA4, GPI, LOW);      //电平读取， 初始化LOW, HIGH没有意义
   
-  result = gpio_get(PTA4);            //读取某个拨码开关的值
-  uart_printf(test_port, "%d\n", result);
-  while(1);
+  //result = gpio_get(PTA4);            //读取某个拨码开关的值
+  //uart_printf(test_port, "%d\n", result);
+ // while(1);
   
   EnableInterrupts;
   while(1)                                //1s翻转一次，延时为不精确控制，精确控制见PIT
@@ -86,17 +87,17 @@ void main()
   //ftm_pwm_init(FTM1, FTM_CH1, 50,0);
   ftm_pwm_init(FTM3, FTM_CH1, 50,0);//PTE6
   delayms(1000);
-  int duty = 885;
+  int duty = 750;
   //其他对频率与占空比修饰的函数、注意事项见FTM.c
   EnableInterrupts;
   while(1)
   {
-    //duty = duty + 10;
+    duty = duty + 10;
     ftm_pwm_duty(FTM3, FTM_CH1,duty);
-    //if (duty >1050)
-      //duty = 750;
+    if (duty >1050)
+      duty = 750;
     uart_printf(test_port, "占空比：%d\n",duty);
-    delayms(1000);
+    delayms(300);
   }
 }
 #elif 0
@@ -170,17 +171,17 @@ void main()
   while(1)
   {}
 }
-#elif 0
+#elif 1
 #define AD_CH   ADC1_DM0
 //测试编码器
 
 void main()
 {
   DisableInterrupts;
-  struct pid_controller pidctrl,pidctr2;
-  pid1 = pid_create(&pidctrl, &left_speed_in, &left_speed_out, &left_speed_set,100,2,0,-10000, 10000);
-  pid2 = pid_create(&pidctr2, &right_speed_in, &right_speed_out, &right_speed_set,100,1.5,0,-10000, 10000);
-  motor_init();
+  /*struct pid_controller pidctrl,pidctr2;
+  pid1 = pid_create(&pidctrl, &left_speed_in, &left_speed_out, &left_speed_set,60,2,0,-10000, 10000);
+  pid2 = pid_create(&pidctr2, &right_speed_in, &right_speed_out, &right_speed_set,60,1.5,0,-10000, 10000);
+  */motor_init();
   ftm_pwm_init(FTM3, FTM_CH1,50,0);//PTE6 
   uart_init(test_port, 115200);
   ftm_quad_init(FTM1);//初始化正交解码模块ftm1:
@@ -199,7 +200,31 @@ void main()
   {
   }
 }
-#elif 1 //测试摄像头
+
+#elif 0
+//测试编码器
+
+void main()
+{
+  DisableInterrupts;
+  uart_init(test_port, 115200);
+  ftm_quad_init(FTM1);//初始化正交解码模块ftm1:
+  ftm_quad_init(FTM2);//初始化正交解码模块ftm2:
+  float left;
+  float right;
+  EnableInterrupts;
+  while(1)
+  {
+    left = (float)ftm_quad_get(FTM1);
+    right = -(float)ftm_quad_get(FTM2);
+    ftm_quad_clean(FTM1);
+    ftm_quad_clean(FTM2);
+    uart_printf(test_port, "left:%lf,right:%lf\n",left,right);
+    delayms(100);
+  }
+}
+
+#elif 0 //测试摄像头
 void main(void)
 {    
     
